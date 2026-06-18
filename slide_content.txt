@@ -1,0 +1,696 @@
+--- SLIDE 1 ---
+
+AGENTIC AI
+
+Lesson 7
+QUY TẮC BÀN GIAO (HANDOFF) &amp; KIỂM DUYỆT (CHECKPOINT)
+
+
+
+--- SLIDE 2 ---
+
+
+
+
+
+Buổi học này, bạn cần nắm rõ:
+Thiết lập Checkpoint 
+Xây dựng giao diện Web để kiểm soát chất lượng AI theo mô hình 
+Human-in-the-loop
+ — người luôn ở trong vòng lặp.
+MỤC TIÊU HỌC TẬP
+
+Tư duy Handoff 
+Hiểu rõ ranh giới giữa việc 
+AI làm
+ và 
+Con người nhận
+ — điểm chuyển giao trách nhiệm quan trọng nhất trong hệ thống.
+Audit 7 Thành tố 
+Ôn tập và áp dụng bộ khung 
+7 thành tố
+ từ Buổi 1 vào một hệ thống Lead Scoring thực tế.
+
+
+--- SLIDE 3 ---
+
+
+
+
+
+Phần 1:
+TƯ DUY HANDOFF 
+
+
+--- SLIDE 4 ---
+Khái Niệm &quot;Bàn Giao Công Việc&quot; (Handoff)
+
+ĐỊNH NGHĨA CỐT LÕI
+Handoff là điểm chuyển giao trách nhiệm
+Trong doanh nghiệp, 
+&quot;Sai một ly đi một dặm&quot;
+ thường xảy ra ở khâu bàn giao. Nếu Data team bàn giao cho Sales team một danh sách khách hàng 
+&quot;rác&quot;
+, toàn bộ chi phí quảng cáo và nhân sự Telesale sẽ bị lãng phí.
+Hệ thống AI tốt là hệ thống có 
+điểm bàn giao sạch sẽ
+.
+
+
+Hậu quả của Handoff kém
+Chi phí quảng cáo bị lãng phí
+Nhân sự Telesale gọi nhầm đối tượng
+Mất niềm tin vào hệ thống AI
+Dữ liệu &quot;rác&quot; lan truyền sang bộ phận khác
+Quyết định kinh doanh sai lệch
+
+
+--- SLIDE 5 ---
+Bàn Giao Dữ Liệu vs. Bàn Giao Hệ Thống
+Có hai hình thức bàn giao khác nhau, phục vụ hai đối tượng khác nhau — và buổi 7 chúng ta làm 
+cả hai!
+
+
+📊
+ Bàn giao Dữ liệu
+Định dạng:
+ Excel / CSV
+Đối tượng nhận:
+ Đội Sales, Marketing, Quản lý trực tiếp
+Giá trị:
+ Kết quả tức thì — Ai là khách VIP? Ai cần gọi ngay?
+
+
+💻
+ Bàn giao Hệ thống
+Định dạng:
+ GitHub / Source Code
+Đối tượng nhận:
+ Đội kỹ thuật, Khách hàng mua giải pháp
+Giá trị:
+ Tài sản trí tuệ — Logic chấm điểm, mã nguồn, cách vận hành
+
+✅ 
+Chốt:
+ Buổi 7 chúng ta thực hành cả hai hình thức bàn giao — từ file Excel cho Sales đến mã nguồn trên GitHub cho đội kỹ thuật.
+
+
+--- SLIDE 6 ---
+Tại Sao AI Không Nên Chạy 100% Tự Động?
+
+VẤN ĐỀ THỰC TẾ
+Ảo giác (Hallucination) &amp; Sai lệch ngữ cảnh
+Khách hàng nhắn: 
+&quot;Tôi không muốn học IELTS đâu, tôi muốn thi SAT&quot;
+AI có thể nhầm từ khóa 
+&quot;IELTS&quot;
+ và vẫn chấm 
+100 điểm VIP
+ — hoàn toàn sai với thực tế.
+
+HỆ LỤY NGUY HIỂM
+Mất uy tín hệ thống AI
+Sales sẽ nói: 
+&quot;Cái AI này ngu quá, lọc toàn khách sai&quot;
+ — và từ chối sử dụng hệ thống.
+
+⚠️ Cần một 
+&quot;Checkpoint&quot;
+ để con người can thiệp trước khi dữ liệu được xuất ra ngoài.
+
+
+--- SLIDE 7 ---
+
+
+
+
+
+Phần 2:
+THIẾT LẬP CHECKPOINT &amp; AUDIT 7 THÀNH TỐ
+
+
+--- SLIDE 8 ---
+Khái Niệm Human-in-the-Loop (HITL)
+
+MÔ HÌNH: NGƯỜI Ở GIỮA VÒNG LẶP
+Hệ thống thực thi
+Người duyệt
+AI đề xuất
+Quy trình HITL đảm bảo con người luôn kiểm soát chất lượng đầu ra trước khi hệ thống thực thi hành động cuối cùng.
+
+🛡️
+ An toàn tuyệt đối
+Loại bỏ 
+100% lỗi ngớ ngẩn
+ của AI trước khi xuất file — không có lỗi nào lọt đến tay Sales.
+
+🔄
+ Đào tạo ngược
+Những lần người dùng 
+sửa lỗi
+ trên App chính là dữ liệu quý giá để tinh chỉnh lại Prompt và Knowledge Base sau này.
+
+
+--- SLIDE 9 ---
+Ôn Tập 7 Thành Tố Hệ Thống AI
+
+NHÓM 1: ĐẦU VÀO &amp; CÔNG CỤ
+Ba thành tố đầu tiên tạo nên nền tảng vận hành của hệ thống. 
+Thiếu 1 trong 3, hệ thống không thể chạy được.
+
+
+
+1
+Input — Dữ liệu đầu vào
+Phải đa dạng, thô, chưa qua xử lý.
+JSON từ form đăng ký
+Excel từ đội Sales
+Google Sheets trực tiếp
+
+
+
+2
+AI Agent — Bộ não
+Thực hiện logic chấm điểm dựa trên Prompt được thiết kế sẵn.
+Phân tích ngữ cảnh hội thoại
+Áp dụng tiêu chí từ Knowledge Base
+
+
+
+3
+Tools — Công cụ hỗ trợ
+Bộ ba công cụ không thể thiếu:
+Streamlit
+ — Giao diện người dùng
+Pandas
+ — Xử lý bảng dữ liệu
+GitHub
+ — Lưu trữ &amp; bàn giao
+
+❓ 
+Câu hỏi kiểm tra:
+ Thiếu 1 trong 3 thành tố trên, hệ thống có chạy được không? → 
+Không.
+ 
+      Cả ba đều là điều kiện cần thiết.
+
+
+--- SLIDE 10 ---
+Ôn Tập 7 Thành Tố Hệ Thống AI
+
+NHÓM 2: TRI THỨC &amp; QUY TRÌNH
+Bốn thành tố còn lại quyết định 
+chất lượng
+ và 
+tính bền vững
+ của hệ thống theo thời gian.
+
+
+1
+Knowledge Base
+Bộ tiêu chí chấm điểm (File .txt) — 
+&quot;Luật chơi&quot;
+ của toàn hệ thống. Thay đổi chiến lược chỉ cần sửa file này.
+
+
+2
+Memory
+Lưu vết lịch sử qua 
+Session State
+ (tạm thời) và 
+GitHub Commits
+ (vĩnh viễn). Cho phép truy vết mọi thay đổi.
+
+
+3
+Workflow
+Luồng đi từ 
+Input
+ → qua 
+AI Agent
+ → đến 
+Dashboard
+ → ra 
+Excel
+. Kết nối tất cả thành tố lại với nhau.
+
+
+4
+Output
+Sản phẩm cuối cùng: 
+File Excel sạch
+ — sẵn sàng bàn giao cho đội Sales mà không cần chỉnh sửa thêm.
+
+
+--- SLIDE 11 ---
+Deep Dive: Thành Tố Số 4 — Knowledge Base
+
+Tại sao nó quan trọng nhất?
+Hầu hết mọi người viết Prompt 
+theo cảm hứng
+ — mỗi lần chạy một kiểu, không nhất quán, không thể kiểm soát.
+Hệ thống Antigravity yêu cầu 
+tách riêng &quot;Luật chấm điểm&quot;
+ ra một file độc lập — đây là điểm khác biệt cốt lõi.
+Lợi ích thực tế
+Khi trung tâm đổi chiến lược — ví dụ: chuyển từ dạy 
+IELTS
+ sang dạy 
+SAT
+ — bạn chỉ cần:
+Mở file 
+.txt
+ Knowledge Base
+Sửa tiêu chí chấm điểm
+Lưu lại và chạy hệ thống
+
+✅ Không cần sửa một dòng code nào. Hệ thống cực kỳ linh hoạt và dễ bảo trì.
+
+
+--- SLIDE 12 ---
+Deep Dive: Thành Tố Số 5 — Memory &amp; GitHub
+Memory hoạt động ở hai cấp độ khác nhau, phục vụ hai mục đích khác nhau trong vòng đời của hệ thống.
+Memory trên App
+Lưu trữ 
+tạm thời
+ các lựa chọn &quot;Duyệt / Loại bỏ&quot; của quản lý trong phiên làm việc hiện tại bằng 
+st.session_state
+.
+Khi đóng trình duyệt, dữ liệu này sẽ được reset — phù hợp cho quyết định ngắn hạn.
+Memory trên GitHub
+Lưu trữ 
+vĩnh viễn
+ các phiên bản của hệ thống qua từng commit — mỗi thay đổi đều được ghi lại với timestamp.
+Cho phép trả lời câu hỏi: 
+&quot;Tại sao tháng trước AI chấm điểm khác tháng này?&quot;
+ — đó chính là 
+khả năng truy vết (Traceability)
+.
+
+
+--- SLIDE 13 ---
+Quy Trình Bàn Giao Chuẩn — Workflow Buổi 7
+
+LUỒNG 4 BƯỚC HOÀN CHỈNH
+Process
+AI Agent phân tích dựa trên Knowledge Base
+Handoff
+Xuất Excel và bàn giao cho Sales
+Ingest
+AI đọc dữ liệu từ Google Sheets hoặc JSON
+Review
+Dashboard hiển thị Grid Checkpoint để kiểm tra
+
+1
+Ingest
+AI đọc dữ liệu từ 
+Google Sheets
+ hoặc 
+JSON
+ — 
+nguồn dữ liệu thô chưa qua xử lý.
+
+2
+Process
+AI Agent phân tích và chấm điểm dựa trên 
+Knowledge Base
+ — 
+áp dụng &quot;luật chơi&quot; đã định nghĩa.
+
+3
+Review
+Dashboard hiển thị 
+bảng Grid Checkpoint
+ — 
+con người kiểm tra, sửa, và phê duyệt từng dòng.
+
+4
+Handoff
+Bấm nút 
+xuất Excel
+ để bàn giao file sạch cho đội Sales — 
+kết thúc vòng lặp.
+
+
+--- SLIDE 14 ---
+Thiết Kế Giao Diện Checkpoint Lý Tưởng
+Mục tiêu: Biến những dòng code phức tạp thành trải nghiệm 
+&quot;Click &amp; Approve&quot;
+ đơn giản cho dân văn phòng.
+
+
+Bảng Dữ Liệu Tương Tác
+Data Editor
+ cho phép quản lý sửa trực tiếp trên giao diện — không cần tải file về, không cần mở Excel riêng.
+
+
+Tính Minh Bạch (Explainability)
+AI phải 
+giải thích
+ lý do chấm điểm: 
+&quot;Tại sao tôi chấm khách này 90 điểm?&quot;
+ — không có hộp đen.
+
+
+Cột Dropdown Trạng Thái
+Cho phép User đổi trạng thái từ 
+&quot;Chờ Review&quot;
+ sang 
+&quot;Đã Duyệt&quot;
+ chỉ với một cú click.
+
+
+--- SLIDE 15 ---
+4 Mức Độ Tự Chủ Của Hệ Thống AI
+Hệ thống AI không phải lúc nào cũng cần chạy hoàn toàn tự động. Chọn mức độ phù hợp với độ trưởng thành của tổ chức:
+
+1
+Level 1 — Gợi ý
+AI chỉ viết ghi chú, người tự copy vào Excel thủ công.
+
+
+2
+Level 2 — Giám sát 
+AI đẩy lên App, người tick chọn rồi xuất Excel. 
+Đây là mức chúng ta học hôm nay.
+
+
+3
+Level 3 — Bán tự động
+AI tự đẩy khách thường vào CRM, chỉ khách VIP/Nghi ngờ mới hiện lên App duyệt.
+
+
+4
+Level 4 — Tự động hoàn toàn
+AI tự làm hết, người chỉ xem báo cáo hiệu quả cuối tháng.
+
+💡 Hầu hết doanh nghiệp nên bắt đầu ở 
+Level 2
+ và tăng dần khi đã xây dựng được niềm tin vào hệ thống AI.
+
+
+--- SLIDE 16 ---
+GitHub &amp; Streamlit: Bộ Đôi Hoàn Hảo Cho Handoff
+
+GitHub — Kho chứa mã nguồn
+Là nơi 
+bàn giao mã nguồn
+ — lưu trữ toàn bộ logic, lịch sử thay đổi, và phiên bản của hệ thống.
+Version control đầy đủ
+Truy vết mọi thay đổi
+Cộng tác nhóm dễ dàng
+Tài sản trí tuệ được bảo vệ
+Streamlit — Mặt tiền ứng dụng
+Là nơi 
+bàn giao trải nghiệm sử dụng
+ — biến code Python thành web app có giao diện đẹp.
+Không cần kiến thức frontend
+Deploy lên cloud trong vài phút
+Tạo link web công khai
+Bàn giao cho khách hàng = gửi link
+
+🔗 
+Kết nối:
+ GitHub đẩy code lên Streamlit Cloud để tạo ra một 
+link web công khai
+. Bàn giao cho khách hàng chính là gửi cho họ cái link này — đơn giản và chuyên nghiệp.
+
+
+--- SLIDE 17 ---
+Kết Luận
+&quot;Xây dựng AI không chỉ là viết code, mà là 
+thiết kế một quy trình tin cậy
+ để con người có thể làm việc 
+ít hơn
+ nhưng 
+hiệu quả hơn
+.&quot;
+
+Nhiệm vụ thực hành ngay bây giờ:
+
+Khởi tạo App bằng 
+Mega Prompt
+Dùng Mega Prompt đã chuẩn bị để tạo toàn bộ cấu trúc ứng dụng Streamlit trong một lần chạy duy nhất.
+
+Kiểm tra 7 Thành tố 
+qua Sidebar
+Mở Sidebar của App và xác nhận đủ 7 thành tố: Input, Agent, Tools, Knowledge Base, Memory, Workflow, Output.
+
+Thực hiện Checkpoint 
+&amp; Xuất file
+Chạy quy trình Review trên Dashboard, phê duyệt từng dòng, và xuất file Excel sạch để bàn giao cho Sales.
+
+
+--- SLIDE 18 ---
+ĐỀ BÀI: XÂY DỰNG HỆ THỐNG AI LEAD SCORING &amp; AUTOMATION CHO NGÀNH BẤT ĐỘNG SẢN.
+
+
+Yêu cầu:
+Phát triển một quy trình tự động hóa lấy dữ liệu khách hàng từ Google Sheets. Link dữ liệu: 
+Tại đây
+Sử dụng AI để chấm điểm tiềm năng của khách hàng dựa trên một bộ quy tắc nghiệp vụ cho trước. Link bộ quy tắc: 
+Tại đây
+Xây dựng giao diện Web App cho phép con người kiểm duyệt, chỉnh sửa trạng thái khách hàng trước khi chốt kết quả (Human-in-the-loop).
+Hệ thống phải có khả năng xuất dữ liệu đã xử lý ra file Excel để bàn giao.
+
+
+--- SLIDE 19 ---
+Phần I: Quy trình Demo Chuẩn
+
+🟢 Giai đoạn 1: Thiết lập Bộ nhớ
+
+MEMORY
+
+PROMPT
+Mở Antigravity và nhập lệnh tạo file 
+lead_scoring_skill.md
+ để hướng dẫn AI lấy file dữ liệu từ GG Sheet và chấm điểm cho ngành Bất động sản. Lưu file vào thư mục dự án.
+
+💬 
+&quot;File Skill này giúp AI ghi nhớ nghiệp vụ. Sau này chỉ cần đưa file này cho bất kỳ con AI nào, nó sẽ làm việc y hệt như bây giờ.&quot;
+
+🔵 Giai đoạn 2: Chuẩn bị Nguyên liệu
+
+INPUT
+
+KNOWLEDGE
+Tạo Input:
+ Tải file 500 khách hàng giả lập ngành BĐS. Tải lên Google Sheets, bật chế độ &quot;Bất kỳ ai có liên kết đều có thể xem&quot;.
+Tạo Knowledge:
+ Nhập file file 
+tieu_chi_cham_diem.txt
+ quy định: Khách mua biệt thự 
++50đ
+, khách nhầm số 
+-50đ
+.
+
+💬 
+&quot;Dữ liệu từ Google Sheets là [INPUT]. Bộ quy tắc chấm điểm là [KNOWLEDGE]. Một hệ thống AI mạnh phải dựa trên nguồn tri thức chuẩn xác.&quot;
+
+
+--- SLIDE 20 ---
+Giai đoạn 3 &amp; 4: Xây dựng &amp; Xuất bản
+🟡
+ Giai đoạn 3: Xây dựng Cỗ máy
+
+TOOLS
+
+AGENT
+
+WORKFLOW
+Tạo file 
+app_lead_scoring.py
+ bằng Streamlit. Sử dụng logic 
+st.data_editor
+ để tạo bảng cho phép con người duyệt trạng thái. Tích hợp logic &quot;AI Scoring&quot; (Agent) tự động quét mô tả khách hàng.
+
+
+Đăng ký tài khoản Github  và Streamlit: 
+HD Tại đây
+
+→ [TOOL]
+
+
+Logic chấm điểm
+→ [AGENT]
+
+
+Con người duyệt bảng
+→ [WORKFLOW - Human Checkpoint]
+
+💬 
+&quot;Con người chốt hạ kết quả cuối cùng.&quot;
+
+🔴
+ Giai đoạn 4: Xuất bản &amp; Bàn giao
+
+OUTPUT
+Đẩy code lên 
+GitHub
+, vào 
+share.streamlit.io
+ để Deploy. Bấm nút &quot;Tải file Excel&quot; trên App để nhận kết quả đã làm sạch.
+Đẩy mã lên GitHub
+Commit và push repo
+Tải file Excel sạch
+Xuất và download dữ liệu
+Triển khai trên Streamlit
+c
+
+💬
+ 
+&quot;Dữ liệu sạch đã sẵn sàng để bàn giao cho bộ phận Sales. Quy trình tự động hóa đã hoàn tất.&quot;
+
+
+--- SLIDE 21 ---
+
+
+
+
+
+Phần 3:
+THỰC HÀNH
+
+
+--- SLIDE 22 ---
+ĐỀ BÀI: NÂNG CẤP HỆ THỐNG AI LEAD SCORING VỚI 2 MỤC TIÊU TRỌNG TÂM
+
+Yêu cầu:
+ 
+Bảo mật dữ liệu (Security):
+ Thiết lập kết nối an toàn để ứng dụng vẫn có thể truy xuất dữ liệu khi Google Sheets được đặt ở chế độ 
+Riêng tư (Private)
+, thay vì dùng link công khai.
+Tối ưu giao diện (Premium UI/UX):
+ Thiết kế lại giao diện ứng dụng theo phong cách chuyên nghiệp:
+Tích hợp 
+Dashboard thống kê
+ số liệu trực quan (số lượng khách VIP, khách rác, tổng số lead...).
+Tùy chỉnh thẩm mỹ bằng 
+CSS Custom
+ (màu sắc, bố cục, hiệu ứng) và thêm các yếu tố nhận diện thương hiệu (Logo, Banner) tùy ý để tạo cảm giác cao cấp.
+
+
+--- SLIDE 23 ---
+Hướng dẫn:
+Cấu hình App kết nối với Google Sheets ở chế độ 
+Private (Hạn chế)
+ thông qua Google Cloud Service Account. Thực hiện theo 4 bước sau:
+
+
+1
+Lấy chìa khóa từ Google Cloud
+Truy cập 
+Console Cloud Google
+ → Tạo Project mới → Bật 
+Google Sheets API
+ → Vào 
+Credentials
+ → 
+Create Service Account
+ → Tab 
+Keys
+ → 
+Add Key
+ → 
+JSON
+. Tải file về máy.
+
+
+2
+Kết nối Sheet với &quot;Robot&quot;
+Mở file 
+.json
+ vừa tải, copy email trong dòng 
+client_email
+. Mở Google Sheet (đang để Private) → 
+Chia sẻ (Share)
+ → Dán email vào và cấp quyền 
+Viewer
+.
+
+
+3
+Cấu hình &quot;Hộp đen bảo mật&quot; (Secrets)
+Vào Dashboard Streamlit Cloud → Bấm dấu 3 chấm cạnh App → 
+Settings
+ → 
+Secrets
+. Dán toàn bộ nội dung file 
+.json
+ vào đây.
+
+
+4
+Sửa Code để dùng Chìa khóa
+Dùng thư viện 
+st-gsheets-connection
+ để đọc dữ liệu bảo mật thay vì dùng link công khai. Kết nối an toàn, không lộ thông tin nhạy cảm.
+
+
+--- SLIDE 24 ---
+Hướng dẫn &quot;Độ&quot; Giao diện
+Dashboard Metrics
+Dùng 
+st.columns(3)
+ kết hợp 
+st.metric
+ để hiển thị: Tổng khách hàng, Khách VIP (+50đ), Khách Rác (-50đ).
+Logo &amp; Banner
+Dùng 
+st.image
+ để đưa logo thương hiệu vào Sidebar hoặc trên cùng trang chủ.
+CSS &amp; Emoji
+Trang trí bằng 
+st.markdown
+ với CSS tùy chỉnh. Dùng 
+st.divider()
+ và icon cảm xúc phù hợp: 
+🏠
+ cho BĐS, 
+💄
+ cho Spa.
+
+📋 Bảng Tổng kết Kiểm tra (Audit)
+Học viên phải điền được bảng này mới được coi là hoàn thành bài tập.
+
+Thành tố
+Tên File/Công cụ
+Mô tả
+1. Input
+Google Sheets
+500 khách hàng BĐS
+2. Agent
+Logic chấm điểm
+Tự động quét mô tả
+3. Tools
+Streamlit, Pandas, GitHub
+Nền tảng xây dựng
+4. Knowledge
+tieu_chi_cham_diem.txt
+Quy tắc +50đ / -50đ
+5. Memory
+st.session_state
+Ghi nhớ trạng thái
+6. Workflow
+AI → Người duyệt → Excel
+Human Checkpoint
+7. Output
+File Excel Bàn Giao
+Dữ liệu sạch cho Sales
+
+✅ Hoàn thành đủ 7 thành tố = Vượt qua Buổi 7!
+Hướng dẫn:
+
+
+--- SLIDE 25 ---
+BÀI TẬP VỀ NHÀ: TẠO 1 APP QUẢN LÝ CÔNG VIỆC TRONG NGÀNH CỦA CÁC ANH CHỊ 
+
+
+
+--- SLIDE 26 ---
+
+THANK YOU!
+
+

@@ -1,0 +1,66 @@
+﻿🐙 1. CÁC BƯỚC ĐĂNG KÝ GITHUB (Nơi lưu trữ code)
+1. Truy cập trang chủ: Vào địa chỉ github.com.
+2. Bắt đầu đăng ký: Bấm nút "Sign up" màu trắng ở góc trên bên phải.
+3. Nhập thông tin:
+   * Email: Nhập địa chỉ email của bạn (nên dùng Gmail). Bấm Continue.
+   * Password: Tạo mật khẩu (ít nhất 8 ký tự, có số và chữ cái). Bấm Continue.
+   * Username: Đặt tên người dùng (viết liền không dấu, ví dụ: nguyenvana-ai). Bấm Continue.
+   * Thông báo: Nhập n (nếu không muốn nhận email quảng cáo) và bấm Continue.
+4. Xác thực người dùng: Thực hiện bài kiểm tra nhỏ (xoay hình...) để xác nhận bạn không phải là robot.
+5. Xác nhận Email: GitHub sẽ gửi một mã số 8 chữ số về email của bạn. Hãy copy mã đó và dán vào trang đăng ký.
+6. Hoàn tất: Sau khi xác thực, bạn có thể bấm Skip personalization (Bỏ qua cá nhân hóa) để vào thẳng giao diện chính.
+________________
+
+
+☁️ 2. CÁC BƯỚC ĐĂNG KÝ STREAMLIT CLOUD (Nơi chạy App Web)
+Lưu ý: Bạn nên có tài khoản GitHub trước khi đăng ký Streamlit.
+1. Truy cập trang chủ: Vào địa chỉ share.streamlit.io.
+2. Kết nối với GitHub:
+   * Bấm vào nút "Continue with GitHub". Đây là cách nhanh nhất và bắt buộc để bạn có thể lấy code từ GitHub lên chạy App.
+3. Ủy quyền (Authorize): Một cửa sổ hiện ra yêu cầu cho phép Streamlit truy cập vào GitHub của bạn. Hãy bấm nút "Authorize Streamlit" màu xanh.
+4. Nhập thông tin bổ sung:
+   * Nếu được hỏi, bạn có thể điền thông tin cá nhân (Tên, vai trò: Student/Developer, Công ty: Tự do).
+5. Giao diện quản lý: Sau khi đăng nhập thành công, bạn sẽ thấy giao diện "Workspaces". Tại đây, bạn có thể bấm nút "Create app" để bắt đầu đưa ứng dụng của mình lên mạng.
+
+
+
+
+
+
+
+
+---------------------------------------------------------------
+BÀI THỰC HÀNH: Hướng dẫn Kết nối Bảo mật Google Sheets qua Google Cloud
+Bước 1: Khởi tạo dự án (Project)
+Truy cập Google Cloud Console.
+Nhấn vào nút chọn dự án (ở thanh trên cùng) -> chọn NEW PROJECT.
+Quan trọng: Tại mục Organization, hãy chọn "No organization" để tránh bị các chính sách bảo mật của công ty/trường học chặn việc tạo Key.
+Đặt tên cho dự án (ví dụ: TH7) rồi nhấn Create.
+Bước 2: Kích hoạt thư viện API
+AI cần được cấp quyền sử dụng "ngôn ngữ" của Google Sheets:
+
+
+Tại ô tìm kiếm ở thanh trên cùng, gõ "Google Sheets API".
+Nhấn vào kết quả tìm thấy và nhấn nút ENABLE (Kích hoạt).
+Làm tương tự với "Google Drive API" (để AI có quyền tìm thấy file trong Drive của bạn).
+Bước 3: Tạo Service Account (Tài khoản Robot)
+Đây là bước tạo ra một "nhân viên ảo" thay mặt bạn truy cập vào dữ liệu:
+
+
+Vào menu IAM & Admin > Service Accounts.
+Nhấn + CREATE SERVICE ACCOUNT.
+Nhập tên (ví dụ: lead-scoring-robot) rồi nhấn Create and Continue.
+Tại mục Role, chọn Editor (để Robot có quyền đọc/ghi dữ liệu) -> nhấn Continue -> Done.
+Bước 4: Lấy chìa khóa (JSON Key)
+Trong danh sách Service Accounts, click vào cái email Robot bạn vừa tạo.
+Chọn tab KEYS (ở thanh menu ngang phía trên).
+Nhấn ADD KEY > Create new key.
+Chọn định dạng JSON rồi nhấn Create.
+Một file .json sẽ tải về máy. Hãy đổi tên nó thành credentials.json và bỏ vào thư mục chứa code Python của bạn.
+Bước 5: Ủy quyền cho Robot vào xem Sheet (Cực kỳ quan trọng)
+Google Cloud cấp "chìa khóa", nhưng bạn (chủ sở hữu Sheet) phải cho phép Robot vào "nhà":
+
+
+Mở file credentials.json vừa tải, copy cái địa chỉ email tại dòng "client_email".
+Mở Google Sheet dữ liệu của bạn lên.
+Nhấn nút Share (Chia sẻ) -> Dán email của Robot vào -> Chọn quyền Editor -> Nhấn Send.
