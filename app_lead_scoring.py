@@ -480,140 +480,73 @@ if st.session_state['scored_data'] is not None:
     normal_leads = len(df_calc[df_calc['phan_loai'] == "Binh Thuong"])
     junk_leads = len(df_calc[df_calc['phan_loai'] == "Rac"])
     
-    # Embed customized KPI HTML cards for high visual impact
-    st.markdown(f"""
-    <div class="kpi-container">
-        <div class="kpi-card kpi-total">
-            <div class="kpi-title">Tổng số Leads</div>
-            <div class="kpi-value">{total_leads}</div>
-        </div>
-        <div class="kpi-card kpi-vip">
-            <div class="kpi-title">🔥 Khách hàng VIP (+50đ)</div>
-            <div class="kpi-value">{vip_leads}</div>
-        </div>
-        <div class="kpi-card kpi-normal">
-            <div class="kpi-title">💬 Khách Bình Thường</div>
-            <div class="kpi-value">{normal_leads}</div>
-        </div>
-        <div class="kpi-card kpi-junk">
-            <div class="kpi-title">🗑️ Khách hàng Rác (-50đ)</div>
-            <div class="kpi-value">{junk_leads}</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    # Standard Streamlit columns and metrics
+    col_m1, col_m2, col_m3 = st.columns(3)
+    with col_m1:
+        st.metric(label="📊 Tổng Khách Hàng", value=total_leads)
+    with col_m2:
+        st.metric(label="🔥 Khách VIP (+50đ)", value=vip_leads, delta=f"{vip_leads} leads")
+    with col_m3:
+        st.metric(label="🗑️ Khách Rác (-50đ)", value=junk_leads, delta=f"{junk_leads} leads", delta_color="inverse")
 
     # ----------------- HUMAN IN THE LOOP GRID -----------------
+    st.markdown("---")
     st.subheader("🛡️ Checkpoint Kiểm Duyệt (Human-in-the-loop)")
     
-    col_lead_sel, col_lead_filt = st.columns([1, 2])
+    # Filters and search row
+    col_f1, col_f2, col_f3 = st.columns(3)
+    with col_f1:
+        status_filter = st.selectbox("Lọc theo trạng thái duyệt", ["Tất cả", "Chờ Duyệt", "Đã Duyệt", "Đã Loại"], key="status_filter_sb")
+    with col_f2:
+        class_filter = st.selectbox("Lọc theo phân loại AI", ["Tất cả", "VIP", "Binh Thuong", "Rac"], key="class_filter_sb")
+    with col_f3:
+        search_query = st.text_input("🔍 Tìm kiếm tên hoặc SĐT", "", key="search_query_ti")
+        
+    # Apply filters
+    df_disp = df_calc.copy()
+    if status_filter != "Tất cả":
+        df_disp = df_disp[df_disp['trang_thai_duyet'] == status_filter]
+    if class_filter != "Tất cả":
+        df_disp = df_disp[df_disp['phan_loai'] == class_filter]
+    if search_query:
+        df_disp = df_disp[
+            df_disp['ten_khach'].astype(str).str.contains(search_query, case=False, na=False) | 
+            df_disp['sdt'].astype(str).str.contains(search_query, case=False, na=False)
+        ]
+        
+    # Interactive data editor
+    st.info("👉 **Mẹo**: Bạn có thể click đúp chuột trực tiếp vào các ô dưới đây để chỉnh sửa nhanh Điểm, Phân loại, Trạng thái hoặc Lý do chấm điểm.")
     
-    with col_lead_sel:
-        st.markdown("### ✏️ Chỉnh sửa Lead")
-        # Let user select a lead to edit
-        lead_list = [f"#{r['id']} - {r['ten_khach']}" for _, r in df_calc.iterrows()]
-        selected_lead_str = st.selectbox("Chọn khách hàng để duyệt/chỉnh sửa", lead_list)
+    edited_disp_df = st.data_editor(
+        df_disp,
+        key="leads_editor",
+        num_rows="fixed",
+        use_container_width=True,
+        column_config={
+            "id": st.column_config.NumberColumn("ID", disabled=True),
+            "ten_khach": st.column_config.TextColumn("Tên Khách", disabled=True),
+            "sdt": st.column_config.TextColumn("SĐT", disabled=True),
+            "nhu_cau_mo_ta": st.column_config.TextColumn("Nhu Cầu Mô Tả", disabled=True, width="large"),
+            "diem_tiem_nang": st.column_config.NumberColumn("Điểm Tiềm Năng", min_value=-100, max_value=100, step=10),
+            "phan_loai": st.column_config.SelectboxColumn("Phân Loại", options=["VIP", "Binh Thuong", "Rac"]),
+            "trang_thai_duyet": st.column_config.SelectboxColumn("Trạng Thái Duyệt", options=["Chờ Duyệt", "Đã Duyệt", "Đã Loại"]),
+            "ly_do_cham_diem": st.column_config.TextColumn("Lý Do Chấm Điểm", width="large")
+        }
+    )
+    
+    # Sync modifications back to st.session_state['scored_data']
+    if not edited_disp_df.equals(df_disp):
+        for idx, row in edited_disp_df.iterrows():
+            id_val = row['id']
+            orig_idx = st.session_state['scored_data'][st.session_state['scored_data']['id'] == id_val].index
+            if len(orig_idx) > 0:
+                st.session_state['scored_data'].loc[orig_idx[0], 'diem_tiem_nang'] = row['diem_tiem_nang']
+                st.session_state['scored_data'].loc[orig_idx[0], 'phan_loai'] = row['phan_loai']
+                st.session_state['scored_data'].loc[orig_idx[0], 'trang_thai_duyet'] = row['trang_thai_duyet']
+                st.session_state['scored_data'].loc[orig_idx[0], 'ly_do_cham_diem'] = row['ly_do_cham_diem']
+        st.rerun()
         
-        selected_id = int(selected_lead_str.split(" - ")[0].replace("#", ""))
-        row_idx = df_calc[df_calc['id'] == selected_id].index[0]
-        selected_row = df_calc.loc[row_idx]
-        
-        st.info(f"**Nhu cầu**: {selected_row['nhu_cau_mo_ta']}")
-        
-        # Form inputs
-        new_score = st.number_input("Điểm tiềm năng", min_value=-100, max_value=100, value=int(selected_row['diem_tiem_nang']), key=f"score_{selected_id}")
-        new_class = st.selectbox("Phân loại AI", ["VIP", "Binh Thuong", "Rac"], index=["VIP", "Binh Thuong", "Rac"].index(selected_row['phan_loai']), key=f"class_{selected_id}")
-        new_status = st.selectbox("Trạng thái Duyệt", ["Chờ Duyệt", "Đã Duyệt", "Đã Loại"], index=["Chờ Duyệt", "Đã Duyệt", "Đã Loại"].index(selected_row['trang_thai_duyet']), key=f"status_{selected_id}")
-        new_reason = st.text_area("Lý do chấm điểm", value=selected_row['ly_do_cham_diem'], key=f"reason_{selected_id}")
-        
-        if st.button("💾 Lưu thay đổi", use_container_width=True):
-            df_calc.at[row_idx, 'diem_tiem_nang'] = new_score
-            df_calc.at[row_idx, 'phan_loai'] = new_class
-            df_calc.at[row_idx, 'trang_thai_duyet'] = new_status
-            df_calc.at[row_idx, 'ly_do_cham_diem'] = new_reason
-            st.session_state['scored_data'] = df_calc
-            st.success(f"Đã cập nhật thông tin cho khách hàng {selected_row['ten_khach']}!")
-            st.rerun()
-            
-    with col_lead_filt:
-        st.markdown("### 🔍 Bộ lọc & Danh sách Leads")
-        
-        col_f1, col_f2 = st.columns(2)
-        with col_f1:
-            status_filter = st.selectbox("Lọc theo trạng thái duyệt", ["Tất cả", "Chờ Duyệt", "Đã Duyệt", "Đã Loại"])
-        with col_f2:
-            class_filter = st.selectbox("Lọc theo phân loại AI", ["Tất cả", "VIP", "Binh Thuong", "Rac"])
-            
-        # Apply filters
-        df_disp = df_calc.copy()
-        if status_filter != "Tất cả":
-            df_disp = df_disp[df_disp['trang_thai_duyet'] == status_filter]
-        if class_filter != "Tất cả":
-            df_disp = df_disp[df_disp['phan_loai'] == class_filter]
-            
-        # Pagination
-        page_size = 10
-        total_leads_disp = len(df_disp)
-        total_pages = max(1, int(np.ceil(total_leads_disp / page_size)))
-        
-        col_p1, col_p2 = st.columns([1, 2])
-        with col_p1:
-            page_num = st.number_input(f"Trang (1 - {total_pages})", min_value=1, max_value=total_pages, value=1)
-        with col_p2:
-            st.write(f"Hiển thị {min(total_leads_disp, page_size)} / {total_leads_disp} leads")
-            
-        start_idx = (page_num - 1) * page_size
-        end_idx = start_idx + page_size
-        df_page = df_disp.iloc[start_idx:end_idx]
-        
-        # Render beautiful HTML table matching Glassmorphism
-        html_table = """
-        <table style="width:100%; border-collapse: collapse; background: rgba(30, 41, 59, 0.3); border-radius: 8px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.08); font-size: 13px;">
-          <thead>
-            <tr style="background: rgba(15, 23, 42, 0.6); border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
-              <th style="padding: 10px; text-align: left; color: rgba(255, 255, 255, 0.7);">ID</th>
-              <th style="padding: 10px; text-align: left; color: rgba(255, 255, 255, 0.7);">Tên Khách</th>
-              <th style="padding: 10px; text-align: left; color: rgba(255, 255, 255, 0.7);">SĐT</th>
-              <th style="padding: 10px; text-align: left; color: rgba(255, 255, 255, 0.7);">Điểm AI</th>
-              <th style="padding: 10px; text-align: center; color: rgba(255, 255, 255, 0.7);">Phân Loại</th>
-              <th style="padding: 10px; text-align: left; color: rgba(255, 255, 255, 0.7);">Lý do</th>
-              <th style="padding: 10px; text-align: center; color: rgba(255, 255, 255, 0.7);">Trạng Thái</th>
-            </tr>
-          </thead>
-          <tbody>
-        """
-        
-        for _, r in df_page.iterrows():
-            if r['phan_loai'] == "VIP":
-                badge_html = '<span style="color:#34D399; background:rgba(16,185,129,0.15); padding:2px 8px; border-radius:12px; font-weight:bold; font-size:11px;">VIP</span>'
-            elif r['phan_loai'] == "Rac":
-                badge_html = '<span style="color:#F87171; background:rgba(239,68,68,0.15); padding:2px 8px; border-radius:12px; font-weight:bold; font-size:11px;">RÁC</span>'
-            else:
-                badge_html = '<span style="color:#60A5FA; background:rgba(59,130,246,0.15); padding:2px 8px; border-radius:12px; font-weight:bold; font-size:11px;">Thường</span>'
-                
-            status_html = ""
-            if r['trang_thai_duyet'] == "Đã Duyệt":
-                status_html = '<span style="color:#34D399;">🟢 Đã Duyệt</span>'
-            elif r['trang_thai_duyet'] == "Đã Loại":
-                status_html = '<span style="color:#F87171;">🔴 Đã Loại</span>'
-            else:
-                status_html = '<span style="color:#FBBF24;">🟡 Chờ Duyệt</span>'
-                
-            html_table += f"""
-            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
-              <td style="padding: 10px; color:#E2E8F0;">{r['id']}</td>
-              <td style="padding: 10px; color:#E2E8F0; font-weight:500;">{r['ten_khach']}</td>
-              <td style="padding: 10px; color:#94A3B8;">{r['sdt']}</td>
-              <td style="padding: 10px; color:#F1F5F9; font-weight:bold; font-family:monospace;">{r['diem_tiem_nang']}</td>
-              <td style="padding: 10px; text-align: center;">{badge_html}</td>
-              <td style="padding: 10px; color:#CBD5E1; font-size:12px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{r['ly_do_cham_diem']}">{r['ly_do_cham_diem']}</td>
-              <td style="padding: 10px; text-align: center; font-size:12px;">{status_html}</td>
-            </tr>
-            """
-            
-        html_table += "</tbody></table>"
-        st.markdown(html_table, unsafe_allow_html=True)
-
-    edited_df = df_calc
+    edited_df = st.session_state['scored_data']
 
 
     # ----------------- EXPORT SECTION -----------------
